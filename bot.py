@@ -18,10 +18,15 @@ dp = Dispatcher()
 
 # Ініціалізація клавіатури з Web App
 def get_main_keyboard():
+    # Замінюємо index.html на admin.html для кнопки адмінки
+    admin_url = WEBAPP_URL.replace('index.html', 'admin.html')
+    if 'admin.html' not in admin_url:
+        admin_url += '/admin.html' if not admin_url.endswith('/') else 'admin.html'
+
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🍕 Меню (Web App)", web_app=WebAppInfo(url=WEBAPP_URL))],
-            [KeyboardButton(text="📊 Статистика (Адмін)")]
+            [KeyboardButton(text="🍕 Замовити піцу", web_app=WebAppInfo(url=WEBAPP_URL))],
+            [KeyboardButton(text="⚙️ Адмін-панель", web_app=WebAppInfo(url=admin_url))]
         ],
         resize_keyboard=True
     )
@@ -33,7 +38,7 @@ async def cmd_start(message: Message):
     db.add_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
     await message.answer(
         "Привіт! Я бот-піцерія 🍕\n"
-        "Натисни кнопку нижче, щоб відкрити меню і зробити замовлення.",
+        "Натисни кнопку нижче, щоб відкрити меню і зробити замовлення, або переглянути статистику.",
         reply_markup=get_main_keyboard()
     )
 
@@ -45,8 +50,9 @@ async def web_app_data_handler(message: Message):
     items = data.get('items', '')
     total = data.get('total', 0)
     
-    # Записуємо замовлення в базу
+    # Записуємо замовлення в базу та оновлюємо JSON для адмінки
     db.add_order(message.from_user.id, items, total)
+    db.export_to_json()
     
     await message.answer(
         f"✅ Ваше замовлення успішно прийнято!\n\n"
@@ -55,19 +61,10 @@ async def web_app_data_handler(message: Message):
         f"Дякуємо, що обрали нас!"
     )
 
-# Проста адмінка для показу статистики
-@dp.message(F.text == "📊 Статистика (Адмін)")
-async def admin_stats(message: Message):
-    total_orders, total_revenue = db.get_stats()
-    await message.answer(
-        f"📈 Статистика піцерії:\n\n"
-        f"📦 Всього замовлень: {total_orders}\n"
-        f"💵 Загальна виручка: {total_revenue} грн"
-    )
-
 async def main():
     print("Бот запущений!")
     db.init_db()  # Створюємо таблиці, якщо їх ще немає
+    db.export_to_json() # Генеруємо початковий файл статистики
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
