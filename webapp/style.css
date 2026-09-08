@@ -1,42 +1,142 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: var(--tg-theme-bg-color, #ffffff);
-    color: var(--tg-theme-text-color, #000000);
-    margin: 0;
-    padding: 15px;
+:root {
+    --bg-color: var(--tg-theme-bg-color, #f5f5f5);
+    --text-color: var(--tg-theme-text-color, #222);
+    --hint-color: var(--tg-theme-hint-color, #777);
+    --btn-color: var(--tg-theme-button-color, #ff8a00);
+    --btn-text-color: var(--tg-theme-button-text-color, #fff);
+    --card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
 }
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    padding-bottom: 80px; /* Місце для головної кнопки Telegram */
+}
+
+.header {
+    text-align: center;
+    padding: 20px 10px;
+    background: linear-gradient(135deg, #ff8a00, #ff5e00);
+    color: white;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header p {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
 .container {
-    max-width: 500px;
+    padding: 0 15px;
+    max-width: 600px;
     margin: 0 auto;
 }
-h1 {
+
+.pizza-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+}
+
+.pizza-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 15px;
     text-align: center;
-}
-.pizza-item {
-    border: 1px solid var(--tg-theme-hint-color, #ccc);
-    border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
+    transition: transform 0.2s ease;
 }
+
+.pizza-card:active {
+    transform: scale(0.98);
+}
+
+.pizza-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
 .pizza-info h3 {
     margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 700;
 }
-.pizza-info p {
-    margin: 0;
-    color: var(--tg-theme-hint-color, #888);
+
+.pizza-info p.desc {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    color: var(--hint-color);
+    line-height: 1.3;
 }
-.add-btn {
-    background-color: var(--tg-theme-button-color, #3390ec);
-    color: var(--tg-theme-button-text-color, #ffffff);
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
+
+.pizza-info p.price {
+    margin: 0 0 15px 0;
+    font-size: 16px;
     font-weight: bold;
+    color: var(--btn-color);
 }
-.add-btn.added {
-    background-color: #4caf50;
+
+/* Кнопки додавання */
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn {
+    background-color: var(--btn-color);
+    color: var(--btn-text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 0;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.2s;
+}
+
+.btn:active {
+    opacity: 0.8;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: var(--btn-color);
+    color: var(--btn-text-color);
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.btn-icon:active {
+    transform: scale(0.9);
+}
+
+.count {
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 20px;
 }

@@ -1,55 +1,93 @@
 let tg = window.Telegram.WebApp;
-tg.expand();
+tg.expand(); // Розгорнути на весь екран
+tg.MainButton.color = "#ff8a00"; // Змінити колір головної кнопки під дизайн
+tg.MainButton.textColor = "#ffffff";
 
 const pizzas = [
-    { id: 1, name: "Маргарита", price: 150, desc: "Сир, томати, базилік" },
-    { id: 2, name: "Пепероні", price: 200, desc: "Сир, ковбаса пепероні" },
-    { id: 3, name: "Гавайська", price: 180, desc: "Курка, ананаси, сир" },
-    { id: 4, name: "4 Сири", price: 220, desc: "Моцарела, дорблю, пармезан, чеддер" }
+    { id: 1, name: "Маргарита", price: 150, desc: "Сир, томати, базилік", icon: "🍕" },
+    { id: 2, name: "Пепероні", price: 200, desc: "Сир, ковбаса пепероні", icon: "🍕" },
+    { id: 3, name: "Гавайська", price: 180, desc: "Курка, ананаси, сир", icon: "🍍" },
+    { id: 4, name: "4 Сири", price: 220, desc: "Дорблю, пармезан, чеддер, моцарела", icon: "🧀" },
+    { id: 5, name: "М'ясна", price: 250, desc: "Бекон, салямі, шинка, сир", icon: "🥓" },
+    { id: 6, name: "Веганська", price: 160, desc: "Томати, гриби, перець, оливки", icon: "🥗" }
 ];
 
-let cart = [];
+let cart = {}; // Об'єкт для зберігання кількості товарів {id: count}
 
 function renderPizzas() {
     const list = document.getElementById('pizza-list');
+    list.innerHTML = '';
+    
     pizzas.forEach(pizza => {
-        const item = document.createElement('div');
-        item.className = 'pizza-item';
-        item.innerHTML = `
+        const count = cart[pizza.id] || 0;
+        
+        const card = document.createElement('div');
+        card.className = 'pizza-card';
+        
+        let controlsHtml = '';
+        if (count === 0) {
+            controlsHtml = `<button class="btn" onclick="add(${pizza.id})">Додати</button>`;
+        } else {
+            // Кнопки плюс та мінус, якщо товар вже в кошику
+            controlsHtml = `
+                <div class="controls">
+                    <button class="btn-icon" onclick="remove(${pizza.id})">-</button>
+                    <span class="count">${count}</span>
+                    <button class="btn-icon" onclick="add(${pizza.id})">+</button>
+                </div>
+            `;
+        }
+        
+        card.innerHTML = `
+            <div class="pizza-icon">${pizza.icon}</div>
             <div class="pizza-info">
                 <h3>${pizza.name}</h3>
-                <p>${pizza.desc}</p>
-                <b>${pizza.price} грн</b>
+                <p class="desc">${pizza.desc}</p>
+                <p class="price">${pizza.price} грн</p>
             </div>
-            <button class="add-btn" id="btn-${pizza.id}" onclick="togglePizza(${pizza.id})">Додати</button>
+            <div class="card-controls" id="controls-${pizza.id}">
+                ${controlsHtml}
+            </div>
         `;
-        list.appendChild(item);
+        list.appendChild(card);
     });
 }
 
-function togglePizza(id) {
-    const btn = document.getElementById(`btn-${id}`);
-    const index = cart.indexOf(id);
-    if (index > -1) {
-        cart.splice(index, 1);
-        btn.innerText = "Додати";
-        btn.classList.remove('added');
-    } else {
-        cart.push(id);
-        btn.innerText = "У кошику";
-        btn.classList.add('added');
+function add(id) {
+    if (!cart[id]) {
+        cart[id] = 0;
     }
+    cart[id]++;
+    renderPizzas();
     updateMainButton();
+    // Легка вібрація для кращого UX
+    tg.HapticFeedback.selectionChanged();
+}
+
+function remove(id) {
+    if (cart[id] > 0) {
+        cart[id]--;
+        if (cart[id] === 0) {
+            delete cart[id];
+        }
+    }
+    renderPizzas();
+    updateMainButton();
+    tg.HapticFeedback.selectionChanged();
 }
 
 function updateMainButton() {
-    if (cart.length > 0) {
-        let total = 0;
-        cart.forEach(id => {
-            const pizza = pizzas.find(p => p.id === id);
-            total += pizza.price;
-        });
-        tg.MainButton.text = `Замовити (${total} грн)`;
+    let total = 0;
+    let count = 0;
+    
+    for (let id in cart) {
+        const pizza = pizzas.find(p => p.id == id);
+        total += pizza.price * cart[id];
+        count += cart[id];
+    }
+    
+    if (total > 0) {
+        tg.MainButton.text = `Оформити замовлення (${total} грн)`;
         tg.MainButton.show();
     } else {
         tg.MainButton.hide();
@@ -59,18 +97,22 @@ function updateMainButton() {
 Telegram.WebApp.onEvent("mainButtonClicked", function() {
     let orderDetails = [];
     let totalPrice = 0;
-    cart.forEach(id => {
-        const pizza = pizzas.find(p => p.id === id);
-        orderDetails.push(pizza.name);
-        totalPrice += pizza.price;
-    });
+    
+    for (let id in cart) {
+        const pizza = pizzas.find(p => p.id == id);
+        const qty = cart[id];
+        orderDetails.push(`${pizza.name} (x${qty})`);
+        totalPrice += pizza.price * qty;
+    }
     
     const data = {
         items: orderDetails.join(', '),
         total: totalPrice
     };
     
+    // Надсилаємо дані боту для запису в БД
     tg.sendData(JSON.stringify(data));
 });
 
+// Первинне відмальовування меню
 renderPizzas();
