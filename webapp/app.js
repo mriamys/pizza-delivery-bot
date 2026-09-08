@@ -86,8 +86,11 @@ function updateMainButton() {
         count += cart[id];
     }
     
-    // Якщо ми в Telegram
-    if (tg.initDataUnsafe && Object.keys(tg.initDataUnsafe).length > 0) {
+    // Якщо ми в Telegram (ініціалізаційні дані не порожні)
+    if (tg.initData !== "") {
+        let fallbackBtn = document.getElementById('fallback-cart');
+        fallbackBtn.style.display = 'none'; // Ховаємо нашу запасну кнопку
+        
         if (total > 0) {
             tg.MainButton.text = `Оформити замовлення (${total} грн)`;
             tg.MainButton.show();
@@ -95,7 +98,7 @@ function updateMainButton() {
             tg.MainButton.hide();
         }
     } else {
-        // Якщо ми в браузері (для тестів)
+        // Якщо ми в звичайному браузері (для тестів)
         let fallbackBtn = document.getElementById('fallback-cart');
         if (total > 0) {
             fallbackBtn.style.display = 'block';
@@ -126,7 +129,7 @@ function submitOrder() {
         total: totalPrice
     };
     
-    if (tg.initDataUnsafe && Object.keys(tg.initDataUnsafe).length > 0) {
+    if (tg.initData !== "") {
         tg.sendData(JSON.stringify(data));
     } else {
         alert("Успішно! Дані кошика: " + JSON.stringify(data) + "\n\n(Ви в браузері, тому замовлення не пішло в Telegram)");
