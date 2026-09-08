@@ -86,34 +86,15 @@ function updateMainButton() {
         count += cart[id];
     }
     
-    // Якщо ми в Telegram (ініціалізаційні дані не порожні)
-    if (tg.initData !== "") {
-        let fallbackBtn = document.getElementById('fallback-cart');
-        fallbackBtn.style.display = 'none'; // Ховаємо нашу запасну кнопку
-        
-        if (total > 0) {
-            tg.MainButton.text = `Оформити замовлення (${total} грн)`;
-            tg.MainButton.show();
-        } else {
-            tg.MainButton.hide();
-        }
+    if (total > 0) {
+        tg.MainButton.text = `Оформити замовлення (${total} грн)`;
+        tg.MainButton.show();
     } else {
-        // Якщо ми в звичайному браузері (для тестів)
-        let fallbackBtn = document.getElementById('fallback-cart');
-        if (total > 0) {
-            fallbackBtn.style.display = 'block';
-            fallbackBtn.innerText = `🛒 Оформити замовлення (${total} грн)`;
-        } else {
-            fallbackBtn.style.display = 'none';
-        }
+        tg.MainButton.hide();
     }
 }
 
 Telegram.WebApp.onEvent("mainButtonClicked", function() {
-    submitOrder();
-});
-
-function submitOrder() {
     let orderDetails = [];
     let totalPrice = 0;
     
@@ -129,12 +110,8 @@ function submitOrder() {
         total: totalPrice
     };
     
-    if (tg.initData !== "") {
-        tg.sendData(JSON.stringify(data));
-    } else {
-        alert("Успішно! Дані кошика: " + JSON.stringify(data) + "\n\n(Ви в браузері, тому замовлення не пішло в Telegram)");
-    }
-}
+    tg.sendData(JSON.stringify(data));
+});
 
 // Первинне відмальовування меню
 renderPizzas();
