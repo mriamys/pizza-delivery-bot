@@ -8,7 +8,7 @@ const pizzas = [
     { id: 2, name: "Пепероні", price: 200, desc: "Сир, ковбаса пепероні", image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=300&q=80" },
     { id: 3, name: "Гавайська", price: 180, desc: "Курка, ананаси, сир", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80" },
     { id: 4, name: "4 Сири", price: 220, desc: "Дорблю, пармезан, чеддер, моцарела", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300&q=80" },
-    { id: 5, name: "М'ясна", price: 250, desc: "Бекон, салямі, шинка, сир", image: "https://images.unsplash.com/photo-1534308983496-4fbf1a0d0bf2?w=300&q=80" },
+    { id: 5, name: "М'ясна", price: 250, desc: "Бекон, салямі, шинка, сир", image: "https://images.unsplash.com/photo-1590947132387-155cc02f3212?w=300&q=80" },
     { id: 6, name: "Веганська", price: 160, desc: "Томати, гриби, перець, оливки", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=300&q=80" }
 ];
 
@@ -86,15 +86,31 @@ function updateMainButton() {
         count += cart[id];
     }
     
-    if (total > 0) {
-        tg.MainButton.text = `Оформити замовлення (${total} грн)`;
-        tg.MainButton.show();
+    // Якщо ми в Telegram
+    if (tg.initDataUnsafe && Object.keys(tg.initDataUnsafe).length > 0) {
+        if (total > 0) {
+            tg.MainButton.text = `Оформити замовлення (${total} грн)`;
+            tg.MainButton.show();
+        } else {
+            tg.MainButton.hide();
+        }
     } else {
-        tg.MainButton.hide();
+        // Якщо ми в браузері (для тестів)
+        let fallbackBtn = document.getElementById('fallback-cart');
+        if (total > 0) {
+            fallbackBtn.style.display = 'block';
+            fallbackBtn.innerText = `🛒 Оформити замовлення (${total} грн)`;
+        } else {
+            fallbackBtn.style.display = 'none';
+        }
     }
 }
 
 Telegram.WebApp.onEvent("mainButtonClicked", function() {
+    submitOrder();
+});
+
+function submitOrder() {
     let orderDetails = [];
     let totalPrice = 0;
     
@@ -110,9 +126,12 @@ Telegram.WebApp.onEvent("mainButtonClicked", function() {
         total: totalPrice
     };
     
-    // Надсилаємо дані боту для запису в БД
-    tg.sendData(JSON.stringify(data));
-});
+    if (tg.initDataUnsafe && Object.keys(tg.initDataUnsafe).length > 0) {
+        tg.sendData(JSON.stringify(data));
+    } else {
+        alert("Успішно! Дані кошика: " + JSON.stringify(data) + "\n\n(Ви в браузері, тому замовлення не пішло в Telegram)");
+    }
+}
 
 // Первинне відмальовування меню
 renderPizzas();
