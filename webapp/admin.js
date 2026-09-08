@@ -23,6 +23,13 @@ async function loadData() {
             const card = document.createElement('div');
             card.className = 'order-card';
             
+            const statuses = ['Нове', 'Готується', 'В дорозі', 'Виконано', 'Скасовано'];
+            let optionsHtml = '';
+            statuses.forEach(st => {
+                const selected = st === order.status ? 'selected' : '';
+                optionsHtml += `<option value="${st}" ${selected}>${st}</option>`;
+            });
+            
             card.innerHTML = `
                 <div class="order-header">
                     <span class="order-id">#${order.id}</span>
@@ -31,7 +38,9 @@ async function loadData() {
                 <div class="order-client">👤 @${order.username}</div>
                 <div class="order-items">🍕 ${order.items}</div>
                 <div class="order-footer">
-                    <span>Статус: ${order.status}</span>
+                    <select class="status-select" onchange="updateStatus(${order.id}, this.value)">
+                        ${optionsHtml}
+                    </select>
                     <span style="color:var(--primary-color)">${order.total} грн</span>
                 </div>
             `;
@@ -43,6 +52,15 @@ async function loadData() {
         document.getElementById('orders-list').innerHTML = '<p style="color:red;text-align:center;">Помилка завантаження даних. Можливо, ще немає жодного замовлення.</p>';
     }
 }
+
+window.updateStatus = function(orderId, newStatus) {
+    const data = {
+        action: 'update_status',
+        order_id: orderId,
+        status: newStatus
+    };
+    tg.sendData(JSON.stringify(data));
+};
 
 // Завантажуємо дані при старті
 loadData();

@@ -71,6 +71,13 @@ def export_to_json():
         
     conn.close()
 
+def update_order_status(order_id, status):
+    conn = sqlite3.connect('pizza_shop.db')
+    cursor = conn.cursor()
+    cursor.execute('UPDATE orders SET status = ? WHERE order_id = ?', (status, order_id))
+    conn.commit()
+    conn.close()
+
 def add_user(user_id, username, first_name):
     conn = sqlite3.connect('pizza_shop.db')
     cursor = conn.cursor()

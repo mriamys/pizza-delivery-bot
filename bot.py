@@ -47,6 +47,16 @@ async def cmd_start(message: Message):
 async def web_app_data_handler(message: Message):
     # Дані приходять у форматі JSON
     data = json.loads(message.web_app_data.data)
+    
+    action = data.get('action')
+    if action == 'update_status':
+        order_id = data.get('order_id')
+        status = data.get('status')
+        db.update_order_status(order_id, status)
+        db.export_to_json()
+        await message.answer(f"✅ Статус замовлення #{order_id} успішно змінено на '{status}'!")
+        return
+
     items = data.get('items', '')
     total = data.get('total', 0)
     

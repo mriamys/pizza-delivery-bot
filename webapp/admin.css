@@ -99,3 +99,12 @@ h1, h2 {
     justify-content: space-between;
     font-weight: bold;
 }
+.status-select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background: #fff;
+    outline: none;
+    cursor: pointer;
+}
