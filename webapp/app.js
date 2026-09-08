@@ -4,12 +4,12 @@ tg.MainButton.color = "#ff8a00"; // Змінити колір головної �
 tg.MainButton.textColor = "#ffffff";
 
 const pizzas = [
-    { id: 1, name: "Маргарита", price: 150, desc: "Сир, томати, базилік", icon: "🍕" },
-    { id: 2, name: "Пепероні", price: 200, desc: "Сир, ковбаса пепероні", icon: "🍕" },
-    { id: 3, name: "Гавайська", price: 180, desc: "Курка, ананаси, сир", icon: "🍍" },
-    { id: 4, name: "4 Сири", price: 220, desc: "Дорблю, пармезан, чеддер, моцарела", icon: "🧀" },
-    { id: 5, name: "М'ясна", price: 250, desc: "Бекон, салямі, шинка, сир", icon: "🥓" },
-    { id: 6, name: "Веганська", price: 160, desc: "Томати, гриби, перець, оливки", icon: "🥗" }
+    { id: 1, name: "Маргарита", price: 150, desc: "Сир, томати, базилік", image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=300&q=80" },
+    { id: 2, name: "Пепероні", price: 200, desc: "Сир, ковбаса пепероні", image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=300&q=80" },
+    { id: 3, name: "Гавайська", price: 180, desc: "Курка, ананаси, сир", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&q=80" },
+    { id: 4, name: "4 Сири", price: 220, desc: "Дорблю, пармезан, чеддер, моцарела", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300&q=80" },
+    { id: 5, name: "М'ясна", price: 250, desc: "Бекон, салямі, шинка, сир", image: "https://images.unsplash.com/photo-1534308983496-4fbf1a0d0bf2?w=300&q=80" },
+    { id: 6, name: "Веганська", price: 160, desc: "Томати, гриби, перець, оливки", image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=300&q=80" }
 ];
 
 let cart = {}; // Об'єкт для зберігання кількості товарів {id: count}
@@ -39,7 +39,7 @@ function renderPizzas() {
         }
         
         card.innerHTML = `
-            <div class="pizza-icon">${pizza.icon}</div>
+            <img src="${pizza.image}" alt="${pizza.name}" class="pizza-image">
             <div class="pizza-info">
                 <h3>${pizza.name}</h3>
                 <p class="desc">${pizza.desc}</p>
