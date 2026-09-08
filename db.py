@@ -35,7 +35,7 @@ def export_to_json():
     conn = sqlite3.connect('pizza_shop.db')
     cursor = conn.cursor()
     
-    cursor.execute('SELECT COUNT(*), SUM(total_price) FROM orders')
+    cursor.execute("SELECT COUNT(*), SUM(total_price) FROM orders WHERE status != 'Скасовано'")
     row = cursor.fetchone()
     total_orders = row[0]
     total_revenue = row[1] or 0
