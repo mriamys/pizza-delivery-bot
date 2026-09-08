@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--tg-theme-bg-color, #ffffff);
+    color: var(--tg-theme-text-color, #000000);
+    margin: 0;
+    padding: 15px;
+}
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+h1 {
+    text-align: center;
+}
+.pizza-item {
+    border: 1px solid var(--tg-theme-hint-color, #ccc);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.pizza-info h3 {
+    margin: 0 0 5px 0;
+}
+.pizza-info p {
+    margin: 0;
+    color: var(--tg-theme-hint-color, #888);
+}
+.add-btn {
+    background-color: var(--tg-theme-button-color, #3390ec);
+    color: var(--tg-theme-button-text-color, #ffffff);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.add-btn.added {
+    background-color: #4caf50;
+}
