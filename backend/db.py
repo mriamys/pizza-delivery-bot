@@ -63,8 +63,8 @@ def export_to_json():
         "recent_orders": orders
     }
     
-    # Зберігаємо у файл data.json в папку webapp
-    json_path = os.path.join(os.path.dirname(__file__), 'webapp', 'data.json')
+    # Зберігаємо у файл data.json в папку frontend
+    json_path = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'data.json')
     os.makedirs(os.path.dirname(json_path), exist_ok=True)
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
